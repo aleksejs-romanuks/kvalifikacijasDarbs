@@ -14,3 +14,4 @@ scp -P 2222 KafkaConsumer-assembly-0.1.1.jar maria_dev@sandbox-hdp.hortonworks.c
 ssh -p 2222 maria_dev@127.0.0.1
 
 <b>Access hortonworks web UI:</b>
+http://127.0.0.1:8080/#/login
