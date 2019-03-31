@@ -1,13 +1,4 @@
-package com.aleksejs.kafka
-import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.spark.SparkConf
-import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
-import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-import org.apache.spark.streaming.kafka010.KafkaUtils
-import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
-import org.slf4j.LoggerFactory
+package com.uberpalform.kafka;
 
 object SparkStreamingConsumer extends App {
 
