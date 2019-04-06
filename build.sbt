@@ -1,14 +1,12 @@
 name := "KafkaConsumer"
 
-version := "0.2.0"
+version := "1.0.1"
 
 scalaVersion := "2.11.8"
 
 
 val sparkVersion = "2.3.0"
 
-//libraryDependencies += "org.apache.kafka" %% "kafka" % sparkVersion
-//libraryDependencies += "org.apache.kafka" % "kafka-clients" % sparkVersion
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-streaming"            % sparkVersion,  //kafka consumer
   "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion,  //kafka consumer
