@@ -1,3 +1,6 @@
+<b>Spark submit:</b>
+spark-submit  --class com.uberpalform.kafka.SparkConsumer --master yarn-client ./KafkaConsumer-assembly-1.0.2.jar --kafka_topic test --hbase_table_name customer_requests - -hbase_table_namespace rights_of_access --hbase_columns_family gdpr
+
 <b>Kafka location:</b>
 cd /usr/hdp/current/kafka-broker/bin/
 
