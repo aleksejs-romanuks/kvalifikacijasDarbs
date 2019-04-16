@@ -1,24 +1,43 @@
 package com.uberpalform.kafka
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.execution.datasources.hbase.HBaseTableCatalog
 import org.apache.spark.sql.DataFrame
 
-class HbaseWriter (namespace : String, table : String, columnFamily : String) {
-  val requestCatalog = s"""{
-                   	|"table":{"namespace":"test", "name":"test"},
-                   	|"rowkey":"key",
-                      |"columns":{
-                        |"rowkey":{"cf":"rowkey", "col":"key", "type":"string"},
-                        |"customerId":{"cf":"test", "col":"customerId", "type":"string"},
-                        |"requestDateTime":{"cf":"test", "col":"requestDateTime", "type":"string"},
-                        |"status":{"cf":"test", "col":"status", "type":"string"}
-                     |}
-                   |}""".stripMargin
+/***
+  * HbaseWriter class is designed to write requests into the hbase table
+  * @param namespace - hbase table namespace
+  * @param table - hbase table name
+  * @param columnFamily - hbase tables column family
+  */
 
-  def writeRequestHbase(inDf :DataFrame)= {
-    inDf.write.options(
-      Map(HBaseTableCatalog.tableCatalog -> requestCatalog, HBaseTableCatalog.newTable -> "5"))
-      .format("org.apache.spark.sql.execution.datasources.hbase")
-      .save()
+class HbaseWriter (namespace : String, table : String, columnFamily : String) extends LazyLogging{
+  private val requestCatalog =
+    s"""{
+       |"table":{"namespace":"$namespace", "name":"$table"},
+       |"rowkey":"key",
+       |"columns":{
+       |"rowkey":{"cf":"rowkey", "col":"key", "type":"string"},
+       |"customerId":{"cf":"$columnFamily", "col":"customerId", "type":"string"},
+       |"requestDateTime":{"cf":"$columnFamily", "col":"requestDateTime", "type":"string"},
+       |"status":{"cf":"$columnFamily", "col":"status", "type":"string"}
+       |}
+       |}""".stripMargin
+
+    logger.info(s"hbase table mapping: $requestCatalog")
+
+
+  /***
+    * writeRequestHbase function writes dataframe into hbase table
+    * @param inDf - dataframe to write into the habse table. Dataframe schema should be ([rowkey, StringType], [customerId, StringType],[requestDateTime, StringType], [status, StringType])
+    */
+
+  def writeRequestHbase(inDf :DataFrame): Unit = {
+    if(inDf.count() > 0) {
+      inDf.write.options(
+        Map(HBaseTableCatalog.tableCatalog -> requestCatalog, HBaseTableCatalog.newTable -> "5"))
+        .format("org.apache.spark.sql.execution.datasources.hbase")
+        .save()
+    }else logger.warn("No request to insert. ")
   }
 }

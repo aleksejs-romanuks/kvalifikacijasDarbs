@@ -2,16 +2,19 @@ package com.uberpalform.kafka
 
 import java.util.NoSuchElementException
 
-import com.uberpalform.kafka.test.inRequests
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
+import com.typesafe.scalalogging.LazyLogging
 import scala.util.parsing.json.JSON
 
-class JsonRequestParser(val spark : SparkSession)  extends java.io.Serializable {
+/**
+  * JsonRequestParser is a class designed to parse incoming json requests
+  * @param spark - Spark session
+  */
+class JsonRequestParser(val spark : SparkSession)  extends java.io.Serializable with LazyLogging{
   private case class inRequests(
-    customerId: String,
-    requestDateTime: String
+    customerId : String,
+    requestDateTime : String
   )
 
   private def parseJson(inStr : String) : inRequests = {
@@ -23,16 +26,25 @@ class JsonRequestParser(val spark : SparkSession)  extends java.io.Serializable 
           inRequests(request("customerId"), request("requestDateTime"))
         }catch {
           case e : NoSuchElementException => {
-            println(s"Corrupted input request $request ($e)")
+            logger.warn(s"Corrupted input request $request ($e)")
             inRequests(null, null)
           }
         }
       }
-      case None => inRequests(null, null)
+      case None => {
+        logger.info(s"Bad request $inStr. Request will be rejected. ")
+        inRequests(null, null)
+      }
     }
   }
+
+  /***
+    * parseJsonRDDtoDF function is parsing rdd of jsons in the dataframe.
+    * @param inRDD - rdd of jsons
+    * @return - dataframe with schema ([customerId, StringType], [requestDateTime, StringType])
+    */
   def parseJsonRDDtoDF(inRDD : RDD[String]) : DataFrame = {
-    val parsedRdd = inRDD.map(parseJson(_)).filter(_.customerId != null).filter(_.requestDateTime != null)
+    val parsedRdd = inRDD.map(parseJson).filter(_.customerId != null)
     spark.sqlContext.createDataFrame(parsedRdd)
   }
 
