@@ -14,6 +14,8 @@ import scala.util.parsing.json.JSON
 class JsonRequestParser(val spark : SparkSession)  extends java.io.Serializable with LazyLogging{
   private case class inRequests(
     customerId : String,
+    role : String,
+    status : String,
     requestDateTime : String
   )
 
@@ -23,17 +25,22 @@ class JsonRequestParser(val spark : SparkSession)  extends java.io.Serializable 
       case Some(e) => {
         val request = e.asInstanceOf[Map[String, String]]
         try {
-          inRequests(request("customerId"), request("requestDateTime"))
+          inRequests(
+            request("customerId"),
+            request("role"),
+            request("status"),
+            request("requestDateTime")
+          )
         }catch {
           case e : NoSuchElementException => {
             logger.warn(s"Corrupted input request $request ($e)")
-            inRequests(null, null)
+            inRequests(null, null, null, null)
           }
         }
       }
       case None => {
         logger.info(s"Bad request $inStr. Request will be rejected. ")
-        inRequests(null, null)
+        inRequests(null, null, null, null)
       }
     }
   }

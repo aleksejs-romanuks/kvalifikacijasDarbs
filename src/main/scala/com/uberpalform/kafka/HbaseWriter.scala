@@ -19,8 +19,9 @@ class HbaseWriter (namespace : String, table : String, columnFamily : String) ex
        |"columns":{
        |"rowkey":{"cf":"rowkey", "col":"key", "type":"string"},
        |"customerId":{"cf":"$columnFamily", "col":"customerId", "type":"string"},
-       |"requestDateTime":{"cf":"$columnFamily", "col":"requestDateTime", "type":"string"},
-       |"status":{"cf":"$columnFamily", "col":"status", "type":"string"}
+       |"role":{"cf":"$columnFamily", "col":"role", "type":"string"},
+       |"status":{"cf":"$columnFamily", "col":"status", "type":"string"},
+       |"requestDateTime":{"cf":"$columnFamily", "col":"requestDateTime", "type":"string"}
        |}
        |}""".stripMargin
 

@@ -7,10 +7,10 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-import org.apache.spark.streaming.kafka010.KafkaUtils
+import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, KafkaUtils}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.slf4j.LoggerFactory
-import org.apache.spark.sql.functions.{col,lit}
+import org.apache.spark.sql.functions.{col, lit}
 
 object SparkConsumer extends App {
   case class MissingArgumentException(argumnet : String) extends Exception("Please set argument [" + argumnet + "]") {}
@@ -52,7 +52,7 @@ object SparkConsumer extends App {
     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG    -> classOf[StringDeserializer],
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG  -> classOf[StringDeserializer],
     ConsumerConfig.GROUP_ID_CONFIG                  -> "com.uber.kafka.rightsOfAccess",
-    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG         -> "latest",
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG         -> "earliest",
     ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG        -> (false: java.lang.Boolean)
   )
 
@@ -76,8 +76,10 @@ object SparkConsumer extends App {
 
 
   logger.info("Staring input data transformations and loadings ... ")
-  kafkaStream.foreachRDD( (rdd: RDD[ConsumerRecord[String, String]]) =>
-    if(!rdd.isEmpty){
+  kafkaStream.foreachRDD( (rdd: RDD[ConsumerRecord[String, String]]) => {
+    val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+    if (!rdd.isEmpty) {
+
       logger.info("Filter input messages on nulls ... ")
       val pureMessages = rdd.filter(_.value() != null).map(_.value())
 
@@ -86,14 +88,15 @@ object SparkConsumer extends App {
 
       val parsedDfWithKeyColumn = parsedDF
         .withColumn("rowkey", col("customerId"))
-        .withColumn("status", lit("NEW"))
 
 
       logger.info(s"Writing request into hbase table $hbase_table_name ... ")
       hbaseWriterObject.writeRequestHbase(parsedDfWithKeyColumn)
-    }else{
+    } else {
       logger.warn(s"Empty rdd")
     }
+    kafkaStream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)
+  }
   )
   streamingContext.start()
   streamingContext.awaitTermination()

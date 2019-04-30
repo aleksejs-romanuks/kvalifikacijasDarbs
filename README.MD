@@ -5,7 +5,7 @@ spark-submit  --class com.uberpalform.kafka.SparkConsumer --master yarn-client .
 cd /usr/hdp/current/kafka-broker/bin/
 
 <b>Start kafka console consumer:</b>
-/kafka-console-consumer.sh --bootstrap-server sandbox-hdp.hortonworks.com:6667 --topic test --from-beginning
+./kafka-console-consumer.sh --bootstrap-server sandbox-hdp.hortonworks.com:6667 --topic test --from-beginning
 
 <b>Start kafka console producer:</b>
 /usr/hdp/current/kafka-broker/bin/kafka-console-producer.sh --broker-list sandbox-hdp.hortonworks.com:6667 --topic test
