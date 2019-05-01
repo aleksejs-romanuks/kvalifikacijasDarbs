@@ -53,8 +53,8 @@ INSERT INTO TABLE client_data.client VALUES
 +------------------+----------------------------+---------------------+--------------------+
 
 CREATE TABLE IF NOT EXISTS client_data.ride(
-    clientID string,
     driverID string,
+    clientID string,
     amount integer,
     duration string,
     distance float,

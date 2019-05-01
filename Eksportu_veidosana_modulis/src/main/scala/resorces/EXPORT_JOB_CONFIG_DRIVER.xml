@@ -1,0 +1,37 @@
+<uber>
+    <requests>
+        <hbaseTableName>customer_requests</hbaseTableName>
+        <hbaseTableNamespace>rights_of_access</hbaseTableNamespace>
+        <hbaseTableColumnFamily>gdpr</hbaseTableColumnFamily>
+        <hbaseColumns>
+            <column>customerId</column>
+            <column>role</column>
+            <column>status</column>
+            <column>requestDateTime</column>
+        </hbaseColumns>
+        <hbaseFilter>status = 'driver'</hbaseFilter>
+    </requests>
+    <exportConfig>
+        <emailColumn>email</emailColumn>
+        <startingPoint>
+            <tableName>driver</tableName>
+            <exportColumns>*</exportColumns>
+        </startingPoint>
+        <joinTable>
+            <tableName>ride</tableName>
+            <commonColumn>driverID</commonColumn>
+            <exportColumns>driverID,amount,duration,distance,send_request_time,ride_start_time,email,second_name,first_name,driver_licence_ISS,driver_licence_EXP</exportColumns>
+        </joinTable>
+        <joinTable>
+            <tableName>driver_cars_mapping</tableName>
+            <commonColumn>driverID</commonColumn>
+            <exportColumns>*</exportColumns>
+        </joinTable>
+        <joinTable>
+            <tableName>cars</tableName>
+            <commonColumn>carID</commonColumn>
+            <exportColumns>*</exportColumns>
+        </joinTable>
+    </exportConfig>
+    <outputPath>/tmp/test</outputPath>
+</uber>
