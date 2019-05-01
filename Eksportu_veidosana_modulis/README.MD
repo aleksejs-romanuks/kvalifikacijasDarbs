@@ -1,5 +1,5 @@
 <b>Table creation scripts:</b>
-
+<pre>
 CREATE TABLE IF NOT EXISTS client_data.driver(
     driverID string,
     email string,
@@ -141,3 +141,5 @@ INSERT INTO TABLE client_data.driver_cars_mapping VALUES
 | 0000000005                 | 0000000005                    | 2015-01-05                          | 2021-01-05                           |
 | 0000000006                 | 0000000006                    | 2015-01-05                          | 2021-01-05                           |
 +----------------------------+-------------------------------+-------------------------------------+--------------------------------------+
+
+</pre>
