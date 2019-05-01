@@ -9,7 +9,7 @@
             <column>status</column>
             <column>requestDateTime</column>
         </hbaseColumns>
-        <hbaseFilter>status = 'driver'</hbaseFilter>
+        <hbaseFilter>status = 'new' and role = 'driver'</hbaseFilter>
     </requests>
     <exportConfig>
         <emailColumn>email</emailColumn>
