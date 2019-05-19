@@ -1,0 +1,36 @@
+<uber>
+    <requests>
+        <hbaseTableName>customer_requests</hbaseTableName>
+        <hbaseTableNamespace>rights_of_access</hbaseTableNamespace>
+        <hbaseTableColumnFamily>gdpr</hbaseTableColumnFamily>
+        <hbaseRowkeyNewInstanceName>clientID</hbaseRowkeyNewInstanceName>
+        <hbaseColumns>
+            <column>customerId</column>
+            <column>role</column>
+            <column>status</column>
+            <column>requestDateTime</column>
+        </hbaseColumns>
+        <hbaseFilter>status = 'new' and role = 'client'</hbaseFilter>
+    </requests>
+    <exportConfig>
+        <startingPoint>
+            <tableName>client_data.client</tableName>
+            <exportColumns>*</exportColumns>
+        </startingPoint>
+        <joinTable>
+            <tableName>client_data.ride</tableName>
+            <condition>ride.clientID = client.clientID</condition>
+            <exportColumns>
+                client.clientID,
+                client.first_name,
+                client.second_name,
+                client.email,
+                ride.amount,
+                ride.duration,
+                ride.distance,
+                ride.send_request_time,
+                ride.ride_start_time
+            </exportColumns>
+        </joinTable>
+    </exportConfig>
+</uber>

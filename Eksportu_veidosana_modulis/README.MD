@@ -1,3 +1,7 @@
+<b>Spark submit command:<b>
+<p>spark-submit --conf spark.sql.catalogImplementation=hive --class com.uberpalform.sparkexport.SparkExport ./sparkexport-assembly-1.0.1.jar EXPORT_JOB_CONFIG_CLIENT.xml<p>
+
+
 <b>Table creation scripts:</b>
 <pre>
 CREATE TABLE IF NOT EXISTS client_data.driver(
